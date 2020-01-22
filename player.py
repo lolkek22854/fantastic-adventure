@@ -4,7 +4,7 @@ import pyganim
 import os
 
 MOVE_SPEED = 7
-WIDTH = 22
+WIDTH = 20
 HEIGHT = 32
 COLOR = (255, 255, 255)
 JUMP_POWER = 10
@@ -99,7 +99,7 @@ class Player(sprite.Sprite):
         self.boltAnimJump = pyganim.PygAnimation(ANIMATION_JUMP)
         self.boltAnimJump.play()
 
-    def update(self, left, right, up, platforms, ctrl, stairs, down):
+    def update(self, left, right, up, platforms, ctrl=False, stairs='', down=False):
         # self.weapon.image.set_colorkey((255, 255, 255))
         self.hide = ctrl
         last = self.direction

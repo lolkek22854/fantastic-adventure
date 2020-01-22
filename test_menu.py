@@ -4,7 +4,7 @@ from pygame import *
 from player import Player
 from blocks import *
 from shot import Shot
-from enemy import Enemy
+from enemy2 import Enemy
 from attack import Attack
 from interface import *
 from weapon import *
