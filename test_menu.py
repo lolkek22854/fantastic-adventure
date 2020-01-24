@@ -98,7 +98,7 @@ def main():
             pos_move = (0, 0)
             pos_push = (0, 0)
             board = Board(5, 7)
-            board.set_view(100, 100, 50)
+            board.set_view(100, 100, 70)
             while running:
                 for e in pygame.event.get():
                     if e.type == QUIT or (e.type == KEYDOWN and e.key == K_q):
@@ -200,17 +200,17 @@ def main():
                     # if e.type == MOUSEBUTTONDOWN:
                     #     print(e.button)
                     if e.type == KEYDOWN and e.key == K_1:
-                        hero.weapon = Ak47()
-                        if not hero.direction:
-                            hero.weapon.image = transform.flip(hero.weapon.image, True, False)
+                        hero.weapon = hero.weapons[0]
+                        # if not hero.direction:
+                        #     hero.weapon.image = transform.flip(hero.weapon.image, True, False)
                     if e.type == KEYDOWN and e.key == K_2:
-                        hero.weapon = Shotgun()
-                        if not hero.direction:
-                            hero.weapon.image = transform.flip(hero.weapon.image, True, False)
+                        hero.weapon = hero.weapons[1]
+                        # if not hero.direction:
+                        #     hero.weapon.image = transform.flip(hero.weapon.image, True, False)
                     if e.type == KEYDOWN and e.key == K_3:
-                        hero.weapon = Pistol()
-                        if not hero.direction:
-                            hero.weapon.image = transform.flip(hero.weapon.image, True, False)
+                        hero.weapon = hero.weapons[2]
+                        # if not hero.direction:
+                        #     hero.weapon.image = transform.flip(hero.weapon.image, True, False)
                     if e.type == KEYDOWN and e.key == K_w:
                         up = True
                     if e.type == KEYDOWN and e.key == K_a:
@@ -284,9 +284,9 @@ def main():
 
                 camera.update(hero)
                 if down:
-                    hero.update(left, right, up, platforms + lattices, ctrl, stairs, down)
+                    hero.update(left, right, up, platforms + lattices, stairs,ctrl,  down)
                 else:
-                    hero.update(left, right, up, platforms, ctrl, stairs, down)
+                    hero.update(left, right, up, platforms,  stairs, ctrl, down)
 
                 if hit != '':
                     hit.update(hero)
@@ -317,12 +317,13 @@ def main():
                     else:
                         u = False
                         l, r = e.patrol()
-                    e.update(l, r, u, platforms + lattices)
+                    e.update(l, r, u, platforms + lattices, stairs)
                     if check_and_draw(e, hero, WIN_WIDTH, WIN_HEIGHT, total_level_width, total_level_height):
                         screen.blit(e.image, camera.apply(e))
                     if hit != '':
                         if hit.rect.colliderect(e.rect):
                             enemies.remove(e)
+                    screen.blit(e.weapon.image, (camera.apply(e)[0], camera.apply(e)[1]))
 
                 for e in entities:
                     if check_and_draw(e, hero, WIN_WIDTH, WIN_HEIGHT, total_level_width, total_level_height):

@@ -65,46 +65,7 @@ class Enemy(Player):
         self.boltAnimJump = pyganim.PygAnimation(ANIMATION_JUMP)
         self.boltAnimJump.play()
 
-    def update(self, left, right, up, platforms):
-        if up:
-            if self.onGround:
-                self.yvel = -JUMP_POWER
-            self.image.fill(Color(COLOR))
-            self.boltAnimJump.blit(self.image, (0, 0))
-
-        if left:
-            self.xvel = -self.MOVE_SPEED
-            self.image.fill(Color(COLOR))
-            if up:
-                self.boltAnimJumpLeft.blit(self.image, (0, 0))
-            else:
-                self.boltAnimLeft.blit(self.image, (0, 0))
-
-        if right:
-            self.xvel = self.MOVE_SPEED
-            self.image.fill(Color(COLOR))
-            if up:
-                self.boltAnimJumpRight.blit(self.image, (0, 0))
-            else:
-                self.boltAnimRight.blit(self.image, (0, 0))
-
-        if not (left or right):
-            self.xvel = 0
-            if not up:
-                self.image.fill(Color(COLOR))
-                self.boltAnimStay.blit(self.image, (0, 0))
-
-        if not self.onGround:
-            self.yvel += GRAVITY
-
-        self.onGround = False
-        self.rect.y += self.yvel
-        self.collide(0, self.yvel, platforms)
-
-        self.rect.x += self.xvel
-        self.collide(self.xvel, 0, platforms)
-
-    def collide(self, xvel, yvel, platforms):
+    def collide(self, xvel, yvel, platforms, stairs, up, down):
         for p in platforms:
             if sprite.collide_rect(self, p):
                 if xvel > 0:

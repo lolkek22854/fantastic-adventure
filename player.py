@@ -33,22 +33,23 @@ ANIMATION_CRIGHT = [(ICON_DIR + '/mario/cr1.png'),
                     (ICON_DIR + '/mario/cr4.png'),
                     (ICON_DIR + '/mario/cr5.png')]
 ANIMATION_CLEFT = [(ICON_DIR + '/mario/cl1.png'),
-                    (ICON_DIR + '/mario/cl2.png'),
-                    (ICON_DIR + '/mario/cl3.png'),
-                    (ICON_DIR + '/mario/cl4.png'),
-                    (ICON_DIR + '/mario/cl5.png')]
+                   (ICON_DIR + '/mario/cl2.png'),
+                   (ICON_DIR + '/mario/cl3.png'),
+                   (ICON_DIR + '/mario/cl4.png'),
+                   (ICON_DIR + '/mario/cl5.png')]
 
 
 class Player(sprite.Sprite):
     def __init__(self, x, y):
         sprite.Sprite.__init__(self)
+        self.weapons = [Ak47(), Shotgun(), Pistol()]
         self.xvel = 0  # скорость перемещения. 0 - стоять на месте
         self.startX = x  # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
         self.wx = 7
         self.wy = 8
         self.health = 100
-        self.weapon = Pistol()
+        self.weapon = self.weapons[2]
         self.hide = False
         self.img_flag = True
         self.direction = True
@@ -98,8 +99,9 @@ class Player(sprite.Sprite):
 
         self.boltAnimJump = pyganim.PygAnimation(ANIMATION_JUMP)
         self.boltAnimJump.play()
+        self.boltAnimRight.blit(self.image, (0, 0))
 
-    def update(self, left, right, up, platforms, ctrl=False, stairs='', down=False):
+    def update(self, left, right, up, platforms, stairs, ctrl=False, down=False):
         # self.weapon.image.set_colorkey((255, 255, 255))
         self.hide = ctrl
         last = self.direction
@@ -144,34 +146,34 @@ class Player(sprite.Sprite):
                 self.xvel = 0
                 # if not up:
                 #     self.image.fill(COLOR)
-                #     self.boltAnimRight.blit(self.image, (0, 0))
+                # self.boltAnimRight.blit(self.image, (0, 0))
 
-        else:
-            self.img_flag = True
-            self.image = Surface((WIDTH, HEIGHT - 10))
-            x, y = self.rect.x, self.rect.y
-            self.rect = Rect(x, y, WIDTH, HEIGHT - 10)
-            if left:
-                self.xvel = -MOVE_SPEED / 2  # Лево = x- n
-                self.image.fill(COLOR)
-                if up:  # для прыжка влево есть отдельная анимация
-                    self.boltAnimJumpLeft.blit(self.image, (0, 0))
-                else:
-                    self.boltAnimCLeft.blit(self.image, (0, 0))
-
-            if right:
-                self.xvel = MOVE_SPEED / 2  # Право = x + n
-                self.image.fill(COLOR)
-                if up:
-                    self.boltAnimJumpRight.blit(self.image, (0, 0))
-                else:
-                    self.boltAnimCRight.blit(self.image, (0, 0))
-
-            if not (left or right):  # стоим, когда нет указаний идти
-                self.xvel = 0
-                # if not up:
-                #     self.image.fill(COLOR)
-                #     self.boltAnimCStay.blit(self.image, (0, 0))
+        # else:
+        #     self.img_flag = True
+        #     self.image = Surface((WIDTH, HEIGHT - 10))
+        #     x, y = self.rect.x, self.rect.y
+        #     self.rect = Rect(x, y, WIDTH, HEIGHT - 10)
+        #     if left:
+        #         self.xvel = -MOVE_SPEED / 2  # Лево = x- n
+        #         self.image.fill(COLOR)
+        #         if up:  # для прыжка влево есть отдельная анимация
+        #             self.boltAnimJumpLeft.blit(self.image, (0, 0))
+        #         else:
+        #             self.boltAnimCLeft.blit(self.image, (0, 0))
+        #
+        #     if right:
+        #         self.xvel = MOVE_SPEED / 2  # Право = x + n
+        #         self.image.fill(COLOR)
+        #         if up:
+        #             self.boltAnimJumpRight.blit(self.image, (0, 0))
+        #         else:
+        #             self.boltAnimCRight.blit(self.image, (0, 0))
+        #
+        #     if not (left or right):  # стоим, когда нет указаний идти
+        #         self.xvel = 0
+        #         # if not up:
+        #         #     self.image.fill(COLOR)
+        #         #     self.boltAnimCStay.blit(self.image, (0, 0))
 
         if not self.onGround:
             self.yvel += GRAVITY
