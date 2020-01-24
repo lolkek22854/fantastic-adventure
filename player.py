@@ -205,16 +205,16 @@ class Player(sprite.Sprite):
                     self.rect.top = p.rect.bottom  # то не движется вверх
                     self.yvel = 0  # и энергия прыжка пропадает
 
-            for s in stairs:
-                if sprite.collide_rect(self, s):
-                    if up:
-                        # print('u')
-                        self.yvel = -3
-                    elif not down:
-                        # print('d')
-                        self.yvel = 3
-                    else:
-                        self.yvel = 0
+        for s in stairs:
+            if sprite.collide_rect(self, s):
+                if up:
+                    # print('u')
+                    self.yvel = -3
+                elif not down:
+                    # print('d')
+                    self.yvel = 3
+                else:
+                    self.yvel = 0
 
     # def collide_ladder(self, stairs, up, down):
     #     for s in stairs:
