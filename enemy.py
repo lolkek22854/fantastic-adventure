@@ -1,5 +1,6 @@
 import random
 from pygame import *
+from player import Player
 from shot import Shot
 import pyganim
 import os
@@ -29,25 +30,19 @@ ANIMATION_JUMP = [('%s/mmario/j.png' % ICON_DIR, 0.1)]
 ANIMATION_STAY = [('%s/mmario/0.png' % ICON_DIR, 0.1)]
 
 
-class Enemy(sprite.Sprite):
-    def __init__(self, x, y, xp=None):
+class Enemy(Player):
+    def __init__(self, x, y, xp=None, hp=None):
         sprite.Sprite.__init__(self)
+        Player.__init__(self, x, y)
         self.speed = random.randint(1, 3)
+        self.alarm = False
         self.right = True
         self.left = False
-        self.alarm = False
+        self.hp = 4
         self.xp = xp
-        self.xvel = 0
-        self.startX = x
-        self.startY = y
-        self.yvel = 0
-        self.onGround = False
-        self.image = Surface((WIDTH, HEIGHT))
-        self.image.fill(Color(COLOR))
-        self.rect = Rect(x, y, WIDTH, HEIGHT)
-        self.image.set_colorkey(Color('White'))
-        self.hp = 3
-
+        self.dead_count = 10
+        self.shoot_count = 50
+        self.is_alive = True
         boltAnim = []
         for anim in ANIMATION_RIGHT:
             boltAnim.append((anim, ANIMATION_DELAY))
@@ -73,58 +68,7 @@ class Enemy(sprite.Sprite):
         self.boltAnimJump = pyganim.PygAnimation(ANIMATION_JUMP)
         self.boltAnimJump.play()
 
-    def update(self, left, right, up, platforms):
-        if up:
-            if self.onGround:
-                self.yvel = -JUMP_POWER
-            self.image.fill(Color(COLOR))
-            self.boltAnimJump.blit(self.image, (0, 0))
-
-        if left:
-            self.xvel = -self.MOVE_SPEED
-            self.image.fill(Color(COLOR))
-            if up:
-                self.boltAnimJumpLeft.blit(self.image, (0, 0))
-            else:
-                self.boltAnimLeft.blit(self.image, (0, 0))
-
-        if right:
-            self.xvel = self.MOVE_SPEED
-            self.image.fill(Color(COLOR))
-            if up:
-                self.boltAnimJumpRight.blit(self.image, (0, 0))
-            else:
-                self.boltAnimRight.blit(self.image, (0, 0))
-
-        if not (left or right):
-            self.xvel = 0
-            if not up:
-                self.image.fill(Color(COLOR))
-                self.boltAnimStay.blit(self.image, (0, 0))
-
-        if not self.onGround:
-            self.yvel += GRAVITY
-
-        self.onGround = False
-        self.rect.y += self.yvel
-        self.collide(0, self.yvel, platforms)
-
-        self.rect.x += self.xvel
-        self.collide(self.xvel, 0, platforms)
-
-    def look(self, hero, platforms):
-        shoot = Shot((hero.rect.centerx, hero.rect.top), self)
-        br = False
-        # while True:
-        #     shoot.update()
-        #     if shoot.collide(platforms):
-        #         break
-        #     if shoot.collide([hero]):
-        #         br = True
-        #         break
-        return br
-
-    def collide(self, xvel, yvel, platforms):
+    def collide(self, xvel, yvel, platforms, stairs, up, down):
         for p in platforms:
             if sprite.collide_rect(self, p):
                 if xvel > 0:

@@ -4,17 +4,15 @@ from pygame import *
 from player import Player
 from blocks import *
 from shot import Shot
-from enemy2 import Enemy
+from enemy import Enemy
 from attack import Attack
 from interface import *
 from weapon import *
 from levels import Board
 
-# Объявляем переменные
-
-WIN_WIDTH = 800  # Ширина создаваемого окна
-WIN_HEIGHT = 640  # Высота
-DISPLAY = (WIN_WIDTH, WIN_HEIGHT)  # Группируем ширину и высоту в одну переменную
+WIN_WIDTH = 800
+WIN_HEIGHT = 640
+DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
 
 
 # BACKGROUND_COLOR = "#004400"
