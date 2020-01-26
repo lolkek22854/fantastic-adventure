@@ -32,7 +32,7 @@ ANIMATION_STAY = [('%s/mmario/0.png' % ICON_DIR, 0.1)]
 class Enemy(sprite.Sprite):
     def __init__(self, x, y, xp=None):
         sprite.Sprite.__init__(self)
-        self.MOVE_SPEED = random.randint(1, 3)
+        self.speed = random.randint(1, 3)
         self.right = True
         self.left = False
         self.alarm = False

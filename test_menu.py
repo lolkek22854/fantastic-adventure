@@ -49,11 +49,10 @@ def camera_configure(camera, target_rect):
 
 
 def main():
-    pygame.init()  # Инициация PyGame, обязательная строчка
-    screen = pygame.display.set_mode(DISPLAY, FULLSCREEN)  # Создаем окошко
-    # screen = pygame.display.set_mode(DISPLAY)  # Создаем окошко
-    # screen.toggle
-    pygame.display.set_caption("The Nekitos")  # Пишем в шапку
+    pygame.init()
+    # screen = pygame.display.set_mode(DISPLAY, FULLSCREEN)
+    screen = pygame.display.set_mode(DISPLAY)
+    pygame.display.set_caption("The Nekitos")
     stage = 'menu'
     level_num = -1
     run = True
@@ -136,6 +135,7 @@ def main():
             hit = ''
 
             shots = []
+            enemy_bullits = []
 
             enemies = []
             lattices = []
@@ -307,13 +307,17 @@ def main():
                         if pygame.sprite.collide_rect(s, en):
                             if s in shots:
                                 shots.remove(s)
-                            enemies.remove(en)
+                            en.hp = 0
                     screen.blit(s.image, camera.apply(s))
 
                 for e in enemies:
                     e.can_see(hero)
                     if e.alarm:
                         l, r, u = e.rule_enemy(hero)
+                        if abs(e.rect.centerx - hero.rect.centerx) < 200:
+                            print('shoot')
+                            if not enemy_shoot(e, enemy_bullits):
+                                e.shoot_count -= 1
                     else:
                         u = False
                         l, r = e.patrol()
@@ -322,13 +326,23 @@ def main():
                         screen.blit(e.image, camera.apply(e))
                     if hit != '':
                         if hit.rect.colliderect(e.rect):
-                            enemies.remove(e)
+                            e.hp = 0
+                    if e.dead_count == 0:
+                        enemies.remove(e)
                     screen.blit(e.weapon.image, (camera.apply(e)[0], camera.apply(e)[1]))
 
                 for e in entities:
                     if check_and_draw(e, hero, WIN_WIDTH, WIN_HEIGHT, total_level_width, total_level_height):
                         screen.blit(e.image, camera.apply(e))
-                    # screen.blit(e.image, camera.apply(e))
+
+                for b in enemy_bullits:
+                    b.move_shot()
+                    if b.collide(platforms):
+                        try:
+                            shots.remove(b)
+                        except:
+                            pass
+                    screen.blit(b.image, camera.apply(b))
 
                 screen.blit(hero.weapon.image, (camera.apply(hero)[0] + hero.wx, camera.apply(hero)[1] + hero.wy))
 

@@ -11,6 +11,8 @@ class Weapon(sprite.Sprite):
         self.ammo = self.max_ammo
         self.weight = 0
         self.bullet_num = 1
+        self.direction = True
+        self.flip_flag = False
 
     def shoot(self):
         self.ammo -= 1

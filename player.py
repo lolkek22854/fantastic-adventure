@@ -3,7 +3,6 @@ from weapon import *
 import pyganim
 import os
 
-MOVE_SPEED = 7
 WIDTH = 20
 HEIGHT = 32
 COLOR = (255, 255, 255)
@@ -38,6 +37,8 @@ ANIMATION_CLEFT = [(ICON_DIR + '/mario/cl1.png'),
                    (ICON_DIR + '/mario/cl4.png'),
                    (ICON_DIR + '/mario/cl5.png')]
 
+ANIMATION_DEATH = [(ICON_DIR + '/mario/death.png')]
+
 
 class Player(sprite.Sprite):
     def __init__(self, x, y):
@@ -46,8 +47,12 @@ class Player(sprite.Sprite):
         self.xvel = 0  # скорость перемещения. 0 - стоять на месте
         self.startX = x  # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
+        self.speed = 7
+        self.hp = 5
         self.wx = 7
         self.wy = 8
+        self.dead_count = 10
+        self.is_alive = True
         self.health = 100
         self.weapon = self.weapons[2]
         self.hide = False
@@ -94,6 +99,11 @@ class Player(sprite.Sprite):
         self.boltAnimCStay = pyganim.PygAnimation(ANIMATION_CSTAY)
         self.boltAnimCStay.play()
 
+        for anim in ANIMATION_DEATH:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimDeath = pyganim.PygAnimation(boltAnim)
+        self.boltAnimDeath.play()
+
         self.boltAnimJumpRight = pyganim.PygAnimation(ANIMATION_JUMP_RIGHT)
         self.boltAnimJumpRight.play()
 
@@ -110,11 +120,18 @@ class Player(sprite.Sprite):
         elif left:
             self.direction = False
 
-        if self.direction != last:
-            self.weapon.image = transform.flip(self.weapon.image, True, False)
-            self.wx = 7 if self.direction else -4
+        # for w in self.weapons:
+        #     w.direction = self.direction
 
-        if not ctrl:
+        if self.weapon.direction != self.direction:
+            self.weapon.direction = self.direction
+            self.weapon.image = transform.flip(self.weapon.image, True, False)
+
+        # if self.weapon.direction != last:
+        #     self.weapon.image = transform.flip(self.weapon.image, True, False)
+        #     self.wx = 7 if self.direction else -4
+
+        if self.hp > 0:
             if self.img_flag:
                 self.image = Surface((WIDTH, HEIGHT))
                 self.img_flag = False
@@ -127,7 +144,7 @@ class Player(sprite.Sprite):
                 self.boltAnimJump.blit(self.image, (0, 0))
 
             if left:
-                self.xvel = -MOVE_SPEED  # Лево = x- n
+                self.xvel = -self.speed  # Лево = x- n
                 self.image.fill(COLOR)
                 if up:  # для прыжка влево есть отдельная анимация
                     self.boltAnimJumpLeft.blit(self.image, (0, 0))
@@ -135,7 +152,7 @@ class Player(sprite.Sprite):
                     self.boltAnimLeft.blit(self.image, (0, 0))
 
             if right:
-                self.xvel = MOVE_SPEED  # Право = x + n
+                self.xvel = self.speed  # Право = x + n
                 self.image.fill(COLOR)
                 if up:
                     self.boltAnimJumpRight.blit(self.image, (0, 0))
@@ -147,63 +164,41 @@ class Player(sprite.Sprite):
                 # if not up:
                 #     self.image.fill(COLOR)
                 # self.boltAnimRight.blit(self.image, (0, 0))
-
-        # else:
-        #     self.img_flag = True
-        #     self.image = Surface((WIDTH, HEIGHT - 10))
-        #     x, y = self.rect.x, self.rect.y
-        #     self.rect = Rect(x, y, WIDTH, HEIGHT - 10)
-        #     if left:
-        #         self.xvel = -MOVE_SPEED / 2  # Лево = x- n
-        #         self.image.fill(COLOR)
-        #         if up:  # для прыжка влево есть отдельная анимация
-        #             self.boltAnimJumpLeft.blit(self.image, (0, 0))
-        #         else:
-        #             self.boltAnimCLeft.blit(self.image, (0, 0))
-        #
-        #     if right:
-        #         self.xvel = MOVE_SPEED / 2  # Право = x + n
-        #         self.image.fill(COLOR)
-        #         if up:
-        #             self.boltAnimJumpRight.blit(self.image, (0, 0))
-        #         else:
-        #             self.boltAnimCRight.blit(self.image, (0, 0))
-        #
-        #     if not (left or right):  # стоим, когда нет указаний идти
-        #         self.xvel = 0
-        #         # if not up:
-        #         #     self.image.fill(COLOR)
-        #         #     self.boltAnimCStay.blit(self.image, (0, 0))
+        else:
+            self.boltAnimDeath.blit(self.image, (0, 0))
+            self.yvel = 0
+            self.xvel = 0
+            self.dead_count -= 1
 
         if not self.onGround:
             self.yvel += GRAVITY
 
-        self.onGround = False  # Мы не знаем, когда мы на земле((
+        self.onGround = False
         self.rect.y += self.yvel
         self.collide(0, self.yvel, platforms, stairs, up, down)
 
-        self.rect.x += self.xvel  # переносим свои положение на xvel
+        self.rect.x += self.xvel
         self.collide(self.xvel, 0, platforms, stairs, up, down)
         self.image.set_colorkey((255, 255, 255))
 
     def collide(self, xvel, yvel, platforms, stairs, up, down):
         for p in platforms:
-            if sprite.collide_rect(self, p):  # если есть пересечение платформы с игроком
+            if sprite.collide_rect(self, p):
 
-                if xvel > 0:  # если движется вправо
-                    self.rect.right = p.rect.left  # то не движется вправо
+                if xvel > 0:
+                    self.rect.right = p.rect.left
 
-                if xvel < 0:  # если движется влево
-                    self.rect.left = p.rect.right  # то не движется влево
+                if xvel < 0:
+                    self.rect.left = p.rect.right
 
-                if yvel > 0:  # если падает вниз
-                    self.rect.bottom = p.rect.top  # то не падает вниз
-                    self.onGround = True  # и становится на что-то твердое
-                    self.yvel = 0  # и энергия падения пропадает
+                if yvel > 0:
+                    self.rect.bottom = p.rect.top
+                    self.onGround = True
+                    self.yvel = 0
 
-                if yvel < 0:  # если движется вверх
-                    self.rect.top = p.rect.bottom  # то не движется вверх
-                    self.yvel = 0  # и энергия прыжка пропадает
+                if yvel < 0:
+                    self.rect.top = p.rect.bottom
+                    self.yvel = 0
 
         for s in stairs:
             if sprite.collide_rect(self, s):
@@ -215,15 +210,3 @@ class Player(sprite.Sprite):
                     self.yvel = 3
                 else:
                     self.yvel = 0
-
-    # def collide_ladder(self, stairs, up, down):
-    #     for s in stairs:
-    #         if sprite.collide_rect(self, s):
-    #             if up:
-    #                 print('u')
-    #                 self.yvel = -3
-    #             elif not down:
-    #                 print('d')
-    #                 self.yvel = 3
-    #             else:
-    #                 self.yvel = 0

@@ -34,12 +34,15 @@ class Enemy(Player):
     def __init__(self, x, y, xp=None, hp=None):
         sprite.Sprite.__init__(self)
         Player.__init__(self, x, y)
-        self.MOVE_SPEED = random.randint(1, 3)
+        self.speed = random.randint(1, 3)
         self.alarm = False
         self.right = True
         self.left = False
-        self.hp = hp
+        self.hp = 4
         self.xp = xp
+        self.dead_count = 10
+        self.shoot_count = 50
+        self.is_alive = True
         boltAnim = []
         for anim in ANIMATION_RIGHT:
             boltAnim.append((anim, ANIMATION_DELAY))
