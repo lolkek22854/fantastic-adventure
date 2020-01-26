@@ -48,7 +48,7 @@ class Player(sprite.Sprite):
         self.startX = x  # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
         self.speed = 7
-        self.hp = 5
+        self.hp = 40
         self.wx = 7
         self.wy = 8
         self.dead_count = 10

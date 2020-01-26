@@ -307,7 +307,7 @@ def main():
                         if pygame.sprite.collide_rect(s, en):
                             if s in shots:
                                 shots.remove(s)
-                            en.hp = 0
+                            en.hp -= hero.weapon.hit
                     screen.blit(s.image, camera.apply(s))
 
                 for e in enemies:
@@ -338,10 +338,10 @@ def main():
                 for b in enemy_bullits:
                     b.move_shot()
                     if b.collide(platforms):
-                        try:
-                            shots.remove(b)
-                        except:
-                            pass
+                        enemy_bullits.remove(b)
+                    if b.collide([hero]):
+                        hero.hp -= 1
+                        enemy_bullits.remove(b)
                     screen.blit(b.image, camera.apply(b))
 
                 screen.blit(hero.weapon.image, (camera.apply(hero)[0] + hero.wx, camera.apply(hero)[1] + hero.wy))

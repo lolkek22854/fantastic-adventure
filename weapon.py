@@ -26,7 +26,7 @@ class Pistol(Weapon):
         Weapon.__init__(self)
         self.image = image.load('sprites/pistol.png')
         self.image.set_colorkey((255, 255, 255))
-        self.hit = 10
+        self.hit = 5
         self.max_ammo = 7
         self.weight = 1
         self.reload()
@@ -37,7 +37,7 @@ class Shotgun(Weapon):
         Weapon.__init__(self)
         self.image = image.load('sprites/mp1.png')
         self.image.set_colorkey((255, 255, 255))
-        self.hit = 100
+        self.hit = 3
         self.max_ammo = 5
         self.weight = 5
         self.bullet_num = 12
@@ -49,7 +49,7 @@ class Ak47(Weapon):
         Weapon.__init__(self)
         self.image = image.load('sprites/mp1.png')
         self.image.set_colorkey((255, 255, 255))
-        self.hit = 10
+        self.hit = 7
         self.max_ammo = 30
         self.weight = 5
         self.ammo = self.max_ammo

@@ -38,7 +38,7 @@ class Enemy(Player):
         self.alarm = False
         self.right = True
         self.left = False
-        self.hp = 4
+        self.hp = 10
         self.xp = xp
         self.dead_count = 10
         self.shoot_count = 50
