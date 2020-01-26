@@ -58,6 +58,8 @@ def main():
     run = True
     play_flag = False
     menu_color = (28, 91, 237)
+    mixer.music.load("Mortal Kombat_-_Scorpion Theme.mp3")
+    mixer.music.play(-1)
 
     while run:
         if stage == 'menu':
@@ -245,7 +247,7 @@ def main():
 
                     if hero.weapon.ammo > 0:
                         x, y, = hero.rect.center
-                        y1 = -6
+                        y1 = -13
                         s = True
                         shoots = []
                         if e.type == KEYDOWN and e.key == 32:
