@@ -57,7 +57,7 @@ def main():
     play_flag = False
     menu_color = (28, 91, 237)
     mixer.music.load("Mortal Kombat_-_Scorpion Theme.mp3")
-    mixer.music.play(-1)
+    # mixer.music.play(-1)
 
     while run:
         if stage == 'menu':
@@ -195,22 +195,12 @@ def main():
                     if e.type == QUIT or (e.type == KEYDOWN and e.key == K_q):
                         running = False
                         run = False
-                    # if e.type == KEYDOWN:
-                    #     print(e.key)
-                    # if e.type == MOUSEBUTTONDOWN:
-                    #     print(e.button)
                     if e.type == KEYDOWN and e.key == K_1:
                         hero.weapon = hero.weapons[0]
-                        # if not hero.direction:
-                        #     hero.weapon.image = transform.flip(hero.weapon.image, True, False)
                     if e.type == KEYDOWN and e.key == K_2:
                         hero.weapon = hero.weapons[1]
-                        # if not hero.direction:
-                        #     hero.weapon.image = transform.flip(hero.weapon.image, True, False)
                     if e.type == KEYDOWN and e.key == K_3:
                         hero.weapon = hero.weapons[2]
-                        # if not hero.direction:
-                        #     hero.weapon.image = transform.flip(hero.weapon.image, True, False)
                     if e.type == KEYDOWN and e.key == K_w:
                         up = True
                     if e.type == KEYDOWN and e.key == K_a:
@@ -220,17 +210,12 @@ def main():
 
                     if e.type == KEYDOWN and e.key == K_s:
                         down = False
+
                     if e.type == KEYUP and e.key == K_s:
                         down = True
 
-                    if e.type == KEYDOWN and e.key == 266:
-                        attack = True
-
                     if e.type == KEYDOWN and e.key == K_r:
                         hero.weapon.reload()
-
-                    if e.type == KEYUP and e.key == 266:
-                        attack = False
 
                     if e.type == KEYUP and e.key == K_w:
                         up = False
@@ -264,7 +249,6 @@ def main():
                                         shoots.append(Shot((x - 100, y - 20 + 10 * i), (x, y + y1)))
 
                         if type(s) == Shot:
-                            # print('l')
                             hero.weapon.shoot()
                             shots.append(s)
                             if shoots != []:
@@ -273,12 +257,6 @@ def main():
                     if e.type == KEYDOWN and e.key == K_DOWN:
                         x, y, = hero.rect.center
                         hit = Attack(x, y)
-
-
-                        # if e.type == KEYDOWN and e.key == K_DOWN:
-                        #     hit = ''
-
-                # print(enemies[0].look(hero, platforms))
 
                 screen.blit(bg, camera.apply(bg))
 
@@ -315,7 +293,6 @@ def main():
                     if e.alarm:
                         l, r, u = e.rule_enemy(hero)
                         if abs(e.rect.centerx - hero.rect.centerx) < 200:
-                            print('shoot')
                             if not enemy_shoot(e, enemy_bullits):
                                 e.shoot_count -= 1
                     else:
@@ -340,7 +317,7 @@ def main():
                     if b.collide(platforms):
                         enemy_bullits.remove(b)
                     if b.collide([hero]):
-                        hero.hp -= 1
+                        hero.hp -= b.damage
                         enemy_bullits.remove(b)
                     screen.blit(b.image, camera.apply(b))
 

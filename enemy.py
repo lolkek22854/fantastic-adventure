@@ -112,18 +112,9 @@ class Enemy(Player):
         return self.left, self.right
 
     def can_see(self, hero):
-        hide = hero.hide
-        if not hide:
-            if not self.alarm:
-                if abs(self.rect.centerx - hero.rect.centerx) < 10 and abs(self.rect.centery - hero.rect.centery) < 5:
-                    self.alarm = True
-            else:
-                if abs(self.rect.centerx - hero.rect.centerx) > 400:
-                    self.alarm = False
+        if not self.alarm:
+            if abs(self.rect.centerx - hero.rect.centerx) < 600 and abs(self.rect.centery - hero.rect.centery) < 5:
+                self.alarm = True
         else:
-            if not self.alarm:
-                if abs(self.rect.centerx - hero.rect.centerx) < 4 and abs(self.rect.centery - hero.rect.centery) < 4:
-                    self.alarm = True
-            else:
-                if abs(self.rect.centerx - hero.rect.centerx) > 400:
-                    self.alarm = False
+            if abs(self.rect.centerx - hero.rect.centerx) > 400:
+                self.alarm = False

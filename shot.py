@@ -19,9 +19,10 @@ def bullet_speed(st_x, st_y, fin_x, fin_y):
 
 
 class Shot(pygame.sprite.Sprite):
-    def __init__(self, pos, npos):
+    def __init__(self, pos, npos, damage=1):
         pygame.sprite.Sprite.__init__(self)
         self.x, self.y = npos
+        self.damage = damage
         self.st_x, self.st_y = npos
         self.fin_x = pos[0]
         self.fin_y = pos[1]

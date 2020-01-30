@@ -8,14 +8,15 @@ rect_h = 100
 def draw_params(screen, hero, w, h):
     font = pygame.font.SysFont('None', 100)
     ammo = hero.weapon.ammo
-    health = hero.health
+    health = hero.hp
     x = w - rect_w
     y = h - rect_h
     # print(ammo)
     pygame.draw.rect(screen, (0, 0, 100), (x, y, w, h))
     am = font.render(str(ammo), 5, (255, 255, 255))
-    heal = font.render('F', 5, (255, 255, 255))
+    heal = font.render(str(health), 5, (255, 0, 255))
     screen.blit(am, (x + 10, y + 10))
+    screen.blit(heal, (x + 40, y + 10))
 
 
 def check_and_draw(e, hero, ww, wh, levelw, levelh):
@@ -43,17 +44,18 @@ def enemy_shoot(hero, shots):
         s = True
         shoots = []
         if hero.direction:
-            s = Shot((x + 100, y + y1), (x, y + y1))
+            s = Shot((x + 100, y + y1), (x, y + y1), hero.weapon.hit)
             if hero.weapon.bullet_num != 1:
                 for i in range(hero.weapon.bullet_num):
-                    shoot = Shot((x + 100, y - 20 + 10 * i), (x, y + y1))
+                    shoot = Shot((x + 100, y - 20 + 10 * i), (x, y + y1), hero.weapon.hit)
                     shoot.image = pygame.image.load('bullit_r.png').convert()
                     shoots.append(shoot)
             s.image = pygame.image.load('bullit_r.png').convert()
         else:
+            s = Shot((x - 100, y + y1), (x, y + y1), hero.weapon.hit)
             if hero.weapon.bullet_num != 1:
                 for i in range(hero.weapon.bullet_num):
-                    shoots.append(Shot((x - 100, y - 20 + 10 * i), (x, y + y1)))
+                    shoots.append(Shot((x - 100, y - 20 + 10 * i), (x, y + y1), hero.weapon.hit))
 
         if type(s) == Shot:
             hero.weapon.shoot()
