@@ -41,7 +41,7 @@ class Enemy(Player):
         self.hp = 10
         self.xp = xp
         self.dead_count = 10
-        self.shoot_count = 50
+        self.shoot_count = 30
         self.is_alive = True
         boltAnim = []
         for anim in ANIMATION_RIGHT:

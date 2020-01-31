@@ -14,6 +14,8 @@ WIN_WIDTH = 800
 WIN_HEIGHT = 640
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
 
+levels = ['level2.txt', 'level.txt']
+
 
 # BACKGROUND_COLOR = "#004400"
 
@@ -103,13 +105,6 @@ def main():
                     if e.type == QUIT or (e.type == KEYDOWN and e.key == K_q):
                         running = False
                         run = False
-                    if e.type == MOUSEMOTION:
-                        pos = e.pos
-                    if e.type == MOUSEBUTTONDOWN:
-                        stage = 'main_game'
-                        running = False
-                    if e.type == pygame.QUIT:
-                        running = False
                     if e.type == pygame.MOUSEMOTION:
                         pos_move = e.pos
                     if e.type == pygame.MOUSEBUTTONDOWN:
@@ -118,7 +113,11 @@ def main():
                 for cell in board.board:
                     cell.in_cell(pos_move, True)
                     if cell.in_cell(pos_push):
+                        print(cell.num)
                         level_num = cell.num
+                        stage = 'main_game'
+                        running = False
+                        break
 
                 screen.fill(menu_color)
                 board.render(screen)
@@ -130,7 +129,6 @@ def main():
             left = right = False  # по умолчанию - стоим
             up = False
             ctrl = False
-            attack = False
             down = True
             hit = ''
 
@@ -144,7 +142,7 @@ def main():
             entities = pygame.sprite.Group()  # Все объекты
             platforms = []  # то, во что мы будем врезаться или опираться
 
-            fl = open('level2.txt', 'r')
+            fl = open(levels[level_num-1], 'r')
             level = fl.read().split('\n')
             fl.close()
 

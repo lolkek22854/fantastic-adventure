@@ -25,17 +25,6 @@ ANIMATION_JUMP_LEFT = [('%s/mario/jl.png' % ICON_DIR, 0.1)]
 ANIMATION_JUMP_RIGHT = [('%s/mario/jr.png' % ICON_DIR, 0.1)]
 ANIMATION_JUMP = [('%s/mario/j.png' % ICON_DIR, 0.1)]
 ANIMATION_STAY = [('%s/mario/0.png' % ICON_DIR, 0.1)]
-ANIMATION_CSTAY = [('%s/mario/c0.png' % ICON_DIR, 0.1)]
-ANIMATION_CRIGHT = [(ICON_DIR + '/mario/cr1.png'),
-                    (ICON_DIR + '/mario/cr2.png'),
-                    (ICON_DIR + '/mario/cr3.png'),
-                    (ICON_DIR + '/mario/cr4.png'),
-                    (ICON_DIR + '/mario/cr5.png')]
-ANIMATION_CLEFT = [(ICON_DIR + '/mario/cl1.png'),
-                   (ICON_DIR + '/mario/cl2.png'),
-                   (ICON_DIR + '/mario/cl3.png'),
-                   (ICON_DIR + '/mario/cl4.png'),
-                   (ICON_DIR + '/mario/cl5.png')]
 
 ANIMATION_DEATH = [(ICON_DIR + '/mario/death.png')]
 
@@ -77,27 +66,12 @@ class Player(sprite.Sprite):
         self.boltAnimLeft = pyganim.PygAnimation(boltAnim)
         self.boltAnimLeft.play()
 
-        boltAnim = []
-        for anim in ANIMATION_CLEFT:
-            boltAnim.append((anim, ANIMATION_DELAY))
-        self.boltAnimCLeft = pyganim.PygAnimation(boltAnim)
-        self.boltAnimCLeft.play()
-
-        boltAnim = []
-        for anim in ANIMATION_CRIGHT:
-            boltAnim.append((anim, ANIMATION_DELAY))
-        self.boltAnimCRight = pyganim.PygAnimation(boltAnim)
-        self.boltAnimCRight.play()
-
         self.boltAnimStay = pyganim.PygAnimation(ANIMATION_STAY)
         self.boltAnimStay.play()
         self.boltAnimStay.blit(self.image, (0, 0))  # По-умолчанию, стоим
 
         self.boltAnimJumpLeft = pyganim.PygAnimation(ANIMATION_JUMP_LEFT)
         self.boltAnimJumpLeft.play()
-
-        self.boltAnimCStay = pyganim.PygAnimation(ANIMATION_CSTAY)
-        self.boltAnimCStay.play()
 
         for anim in ANIMATION_DEATH:
             boltAnim.append((anim, ANIMATION_DELAY))
@@ -126,10 +100,6 @@ class Player(sprite.Sprite):
         if self.weapon.direction != self.direction:
             self.weapon.direction = self.direction
             self.weapon.image = transform.flip(self.weapon.image, True, False)
-
-        # if self.weapon.direction != last:
-        #     self.weapon.image = transform.flip(self.weapon.image, True, False)
-        #     self.wx = 7 if self.direction else -4
 
         if self.hp > 0:
             if self.img_flag:
