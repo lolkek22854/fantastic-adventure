@@ -16,7 +16,7 @@ def draw_params(screen, hero, w, h):
     am = font.render(str(ammo), 5, (255, 255, 255))
     heal = font.render(str(health), 5, (255, 0, 255))
     screen.blit(am, (x + 10, y + 10))
-    screen.blit(heal, (x + 40, y + 10))
+    screen.blit(heal, (x + 60, y + 10))
 
 
 def check_and_draw(e, hero, ww, wh, levelw, levelh):

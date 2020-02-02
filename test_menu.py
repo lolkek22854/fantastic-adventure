@@ -50,8 +50,8 @@ def camera_configure(camera, target_rect):
 
 def main():
     pygame.init()
-    # screen = pygame.display.set_mode(DISPLAY, FULLSCREEN)
-    screen = pygame.display.set_mode(DISPLAY)
+    screen = pygame.display.set_mode(DISPLAY, FULLSCREEN)
+    # screen = pygame.display.set_mode(DISPLAY)
     pygame.display.set_caption("The Nekitos")
     stage = 'menu'
     level_num = -1
@@ -130,6 +130,7 @@ def main():
             up = False
             ctrl = False
             down = True
+            hero_alive = True
             hit = ''
 
             shots = []
@@ -142,7 +143,7 @@ def main():
             entities = pygame.sprite.Group()  # Все объекты
             platforms = []  # то, во что мы будем врезаться или опираться
 
-            fl = open(levels[level_num-1], 'r')
+            fl = open(levels[level_num - 1], 'r')
             level = fl.read().split('\n')
             fl.close()
 
@@ -190,6 +191,9 @@ def main():
             while running:
 
                 for e in pygame.event.get():
+                    if not hero_alive and e.type == KEYDOWN:
+                        running = False
+                        stage = 'menu'
                     if e.type == QUIT or (e.type == KEYDOWN and e.key == K_q):
                         running = False
                         run = False
@@ -259,17 +263,18 @@ def main():
                 screen.blit(bg, camera.apply(bg))
 
                 camera.update(hero)
-                if down:
-                    hero.update(left, right, up, platforms + lattices, stairs,ctrl,  down)
-                else:
-                    hero.update(left, right, up, platforms,  stairs, ctrl, down)
-
-                if hit != '':
-                    hit.update(hero)
-                    if hit.frames_count < 10:
-                        screen.blit(hit.image, camera.apply(hit))
+                if hero.hp >= 0:
+                    if down:
+                        hero.update(left, right, up, platforms + lattices, stairs, ctrl, down)
                     else:
-                        hit = ''
+                        hero.update(left, right, up, platforms, stairs, ctrl, down)
+
+                    if hit != '':
+                        hit.update(hero)
+                        if hit.frames_count < 10:
+                            screen.blit(hit.image, camera.apply(hit))
+                        else:
+                            hit = ''
 
                 for s in stairs:
                     if check_and_draw(s, hero, WIN_WIDTH, WIN_HEIGHT, total_level_width, total_level_height):
@@ -320,6 +325,16 @@ def main():
                     screen.blit(b.image, camera.apply(b))
 
                 screen.blit(hero.weapon.image, (camera.apply(hero)[0] + hero.wx, camera.apply(hero)[1] + hero.wy))
+
+                if hero.hp < 0:
+                    font = pygame.font.SysFont('None', 100)
+                    font1 = pygame.font.SysFont('None', 40)
+                    udied = font.render('YOU DIED', 5, (255, 0, 0))
+                    text = font1.render('press any key to exit', 2, (255, 40, 30))
+                    cy = WIN_HEIGHT // 2
+                    cx = WIN_WIDTH // 2
+                    screen.blit(udied, (cx - 100, cy - 30))
+                    screen.blit(text, (cx - 10, cy + 40))
 
                 draw_params(screen, hero, WIN_WIDTH, WIN_HEIGHT)
                 timer.tick(60)
