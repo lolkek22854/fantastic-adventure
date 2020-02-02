@@ -38,8 +38,9 @@ class Player(sprite.Sprite):
         self.startY = y
         self.speed = 7
         self.hp = 40
-        self.wx = 7
-        self.wy = 8
+        self.wx_r = -20
+        self.wx_l = 7
+        self.wy = 10
         self.dead_count = 10
         self.is_alive = True
         self.health = 100

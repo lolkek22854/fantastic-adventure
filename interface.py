@@ -16,7 +16,7 @@ def draw_params(screen, hero, w, h):
     am = font.render(str(ammo), 5, (255, 255, 255))
     heal = font.render(str(health), 5, (255, 0, 255))
     screen.blit(am, (x + 10, y + 10))
-    screen.blit(heal, (x + 60, y + 10))
+    screen.blit(heal, (x + 100, y + 10))
 
 
 def check_and_draw(e, hero, ww, wh, levelw, levelh):
@@ -44,18 +44,18 @@ def enemy_shoot(hero, shots):
         s = True
         shoots = []
         if hero.direction:
-            s = Shot((x + 100, y + y1), (x, y + y1), hero.weapon.hit)
+            s = Shot((x + 100, y + y1), (x + hero.wx_l, y + y1), hero.weapon.hit)
             if hero.weapon.bullet_num != 1:
                 for i in range(hero.weapon.bullet_num):
-                    shoot = Shot((x + 100, y - 20 + 10 * i), (x, y + y1), hero.weapon.hit)
+                    shoot = Shot((x + 100, y - 20 + 10 * i), (x + hero.wx_l, y + y1), hero.weapon.hit)
                     shoot.image = pygame.image.load('bullit_r.png').convert()
                     shoots.append(shoot)
             s.image = pygame.image.load('bullit_r.png').convert()
         else:
-            s = Shot((x - 100, y + y1), (x, y + y1), hero.weapon.hit)
+            s = Shot((x - 100, y + y1), (x + hero.wx_r, y + y1), hero.weapon.hit)
             if hero.weapon.bullet_num != 1:
                 for i in range(hero.weapon.bullet_num):
-                    shoots.append(Shot((x - 100, y - 20 + 10 * i), (x, y + y1), hero.weapon.hit))
+                    shoots.append(Shot((x - 100, y - 20 + 10 * i), (x + hero.wx_r, y + y1), hero.weapon.hit))
 
         if type(s) == Shot:
             hero.weapon.shoot()
@@ -66,3 +66,14 @@ def enemy_shoot(hero, shots):
             return True
         else:
             return False
+
+
+def udied(WIN_HEIGHT, WIN_WIDTH, screen):
+    font = pygame.font.SysFont('None', 100)
+    font1 = pygame.font.SysFont('None', 40)
+    udied = font.render('YOU DIED', 5, (255, 0, 0))
+    text = font1.render('press any key to exit', 2, (255, 40, 30))
+    cy = WIN_HEIGHT // 2
+    cx = WIN_WIDTH // 2
+    screen.blit(udied, (cx - 100, cy - 30))
+    screen.blit(text, (cx - 10, cy + 40))

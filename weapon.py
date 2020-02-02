@@ -6,6 +6,7 @@ class Weapon(sprite.Sprite):
         sprite.Sprite.__init__(self)
         self.rect = Rect(0, 0, 10, 10)
         self.image = image.load('blocks/platform.png')
+        self.sound = mixer.Sound('sounds/08669.ogg')
         self.hit = 0
         self.max_ammo = 0
         self.ammo = self.max_ammo
@@ -35,7 +36,7 @@ class Pistol(Weapon):
 class Shotgun(Weapon):
     def __init__(self):
         Weapon.__init__(self)
-        self.image = image.load('sprites/mp1.png')
+        self.image = image.load('sprites/sg.bmp')
         self.image.set_colorkey((255, 255, 255))
         self.hit = 3
         self.max_ammo = 5
@@ -47,11 +48,10 @@ class Shotgun(Weapon):
 class Ak47(Weapon):
     def __init__(self):
         Weapon.__init__(self)
-        self.image = image.load('sprites/mp1.png')
+        self.image = image.load('sprites/mp1.bmp')
         self.image.set_colorkey((255, 255, 255))
         self.hit = 7
         self.max_ammo = 30
         self.weight = 5
         self.ammo = self.max_ammo
-
         self.reload()

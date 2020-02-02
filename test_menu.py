@@ -40,10 +40,10 @@ def camera_configure(camera, target_rect):
     _, _, w, h = camera
     l, t = -l + WIN_WIDTH / 2, -t + WIN_HEIGHT / 2
 
-    l = min(0, l)  # Не движемся дальше левой границы
-    l = max(-(camera.width - WIN_WIDTH), l)  # Не движемся дальше правой границы
-    t = max(-(camera.height - WIN_HEIGHT), t)  # Не движемся дальше нижней границы
-    t = min(0, t)  # Не движемся дальше верхней границы
+    l = min(0, l)
+    l = max(-(camera.width - WIN_WIDTH), l)
+    t = max(-(camera.height - WIN_HEIGHT), t)
+    t = min(0, t)
 
     return Rect(l, t, w, h)
 
@@ -58,7 +58,7 @@ def main():
     run = True
     play_flag = False
     menu_color = (28, 91, 237)
-    mixer.music.load("Mortal Kombat_-_Scorpion Theme.mp3")
+    # mixer.music.load("Mortal Kombat_-_Scorpion Theme.mp3")
     # mixer.music.play(-1)
 
     while run:
@@ -132,13 +132,14 @@ def main():
             down = True
             hero_alive = True
             hit = ''
-
+            # sound_shoot = pygame.mixer.Sound('boom.wav')
             shots = []
             enemy_bullits = []
 
             enemies = []
             lattices = []
             stairs = []
+            ends = []
 
             entities = pygame.sprite.Group()  # Все объекты
             platforms = []  # то, во что мы будем врезаться или опираться
@@ -159,6 +160,11 @@ def main():
                         pf = Platform(x, y)
                         entities.add(pf)
                         platforms.append(pf)
+                    elif col == "@":
+                        pf = End(x, y)
+                        entities.add(pf)
+                        ends.append(pf)
+                        # platforms.append(pf)
                     elif col == '|':
                         pf = Lattice(x, y)
                         lattices.append(pf)
@@ -237,20 +243,21 @@ def main():
                         shoots = []
                         if e.type == KEYDOWN and e.key == 32:
                             if hero.direction:
-                                s = Shot((x + 100, y + y1), (x, y + y1))
+                                s = Shot((x + 100, y + y1), (x + (hero.wx_l * 2), y + y1))
                                 if hero.weapon.bullet_num != 1:
                                     for i in range(hero.weapon.bullet_num):
-                                        shoot = Shot((x + 100, y - 20 + 10 * i), (x, y + y1))
+                                        shoot = Shot((x + 100, y - 20 + 10 * i), (x + (hero.wx_l * 2), y + y1))
                                         shoot.image = pygame.image.load('bullit_r.png').convert()
                                         shoots.append(shoot)
                                 s.image = pygame.image.load('bullit_r.png').convert()
                             else:
-                                s = Shot((x - 100, y + y1), (x, y + y1))
+                                s = Shot((x - 100, y + y1), (x + hero.wx_r * 2, y + y1))
                                 if hero.weapon.bullet_num != 1:
                                     for i in range(hero.weapon.bullet_num):
-                                        shoots.append(Shot((x - 100, y - 20 + 10 * i), (x, y + y1)))
+                                        shoots.append(Shot((x - 100, y - 20 + 10 * i), (x + hero.wx_r * 2, y + y1)))
 
                         if type(s) == Shot:
+                            hero.weapon.sound.play()
                             hero.weapon.shoot()
                             shots.append(s)
                             if shoots != []:
@@ -309,7 +316,13 @@ def main():
                             e.hp = 0
                     if e.dead_count == 0:
                         enemies.remove(e)
-                    screen.blit(e.weapon.image, (camera.apply(e)[0], camera.apply(e)[1]))
+
+                    if e.direction:
+                        screen.blit(e.weapon.image,
+                                    (camera.apply(e)[0] + e.wx_l, camera.apply(e)[1] + e.wy))
+                    else:
+                        screen.blit(e.weapon.image,
+                                    (camera.apply(e)[0] - e.wx_r, camera.apply(e)[1] + e.wy))
 
                 for e in entities:
                     if check_and_draw(e, hero, WIN_WIDTH, WIN_HEIGHT, total_level_width, total_level_height):
@@ -324,17 +337,21 @@ def main():
                         enemy_bullits.remove(b)
                     screen.blit(b.image, camera.apply(b))
 
-                screen.blit(hero.weapon.image, (camera.apply(hero)[0] + hero.wx, camera.apply(hero)[1] + hero.wy))
+                hero.image.set_colorkey((255, 255, 255))
 
-                if hero.hp < 0:
-                    font = pygame.font.SysFont('None', 100)
-                    font1 = pygame.font.SysFont('None', 40)
-                    udied = font.render('YOU DIED', 5, (255, 0, 0))
-                    text = font1.render('press any key to exit', 2, (255, 40, 30))
-                    cy = WIN_HEIGHT // 2
-                    cx = WIN_WIDTH // 2
-                    screen.blit(udied, (cx - 100, cy - 30))
-                    screen.blit(text, (cx - 10, cy + 40))
+                if hero.direction:
+                    screen.blit(hero.weapon.image, (camera.apply(hero)[0] + hero.wx_l, camera.apply(hero)[1] + hero.wy))
+                else:
+                    screen.blit(hero.weapon.image, (camera.apply(hero)[0] + hero.wx_r, camera.apply(hero)[1] + hero.wy))
+
+                if hero.hp <= 0:
+                    hero_alive = False
+                    udied(WIN_HEIGHT, WIN_WIDTH, screen)
+
+                for e in ends:
+                    if hero.rect.colliderect(e.rect):
+                        running = False
+                        stage = 'menu'
 
                 draw_params(screen, hero, WIN_WIDTH, WIN_HEIGHT)
                 timer.tick(60)
