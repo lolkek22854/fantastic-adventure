@@ -14,7 +14,7 @@ WIN_WIDTH = 800
 WIN_HEIGHT = 640
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
 
-levels = ['level2.txt', 'level.txt']
+levels = ['level2.txt', 'level.txt', 'level_1.txt']
 
 
 # BACKGROUND_COLOR = "#004400"
@@ -50,8 +50,8 @@ def camera_configure(camera, target_rect):
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode(DISPLAY, FULLSCREEN)
-    # screen = pygame.display.set_mode(DISPLAY)
+    # screen = pygame.display.set_mode(DISPLAY, FULLSCREEN)
+    screen = pygame.display.set_mode(DISPLAY)
     pygame.display.set_caption("The Nekitos")
     stage = 'menu'
     level_num = -1
@@ -132,6 +132,9 @@ def main():
             down = True
             hero_alive = True
             hit = ''
+            hel = -1
+            pos_call = (-1, -1)
+            helicopter = Helicopter(0, 0)
             # sound_shoot = pygame.mixer.Sound('boom.wav')
             shots = []
             enemy_bullits = []
@@ -140,11 +143,13 @@ def main():
             lattices = []
             stairs = []
             ends = []
+            perks = []
+            bombs = []
 
-            entities = pygame.sprite.Group()  # Все объекты
-            platforms = []  # то, во что мы будем врезаться или опираться
+            entities = pygame.sprite.Group()
+            platforms = []
 
-            fl = open(levels[level_num - 1], 'r')
+            fl = open('level_1', 'r')
             level = fl.read().split('\n')
             fl.close()
 
@@ -154,8 +159,8 @@ def main():
 
             enemies_ind = []
             coords = {}
-            for row in level:  # вся строка
-                for col in row:  # каждый символ
+            for row in level:
+                for col in row:
                     if col == "-":
                         pf = Platform(x, y)
                         entities.add(pf)
@@ -164,7 +169,12 @@ def main():
                         pf = End(x, y)
                         entities.add(pf)
                         ends.append(pf)
-                        # platforms.append(pf)
+                    elif col == "/":
+                        pf = Perk(x, y)
+                        perks.append(pf)
+                    elif col == "+":
+                        helicopter = Helicopter(x, y)
+                        platforms.append(helicopter)
                     elif col == '|':
                         pf = Lattice(x, y)
                         lattices.append(pf)
@@ -195,7 +205,6 @@ def main():
                 pos = coords.get(i)
                 enemies.append(Enemy(pos[0], pos[2], pos))
             while running:
-
                 for e in pygame.event.get():
                     if not hero_alive and e.type == KEYDOWN:
                         running = False
@@ -225,16 +234,17 @@ def main():
                     if e.type == KEYDOWN and e.key == K_r:
                         hero.weapon.reload()
 
+                    if e.type == KEYDOWN and e.key == K_p:
+                        hero.perks -= 1
+                        pos_call = hero.rect.center
+                        hel = Helicopter(hero.rect.x - 1000, hero.rect.y - 1000)
+
                     if e.type == KEYUP and e.key == K_w:
                         up = False
                     if e.type == KEYUP and e.key == K_d:
                         right = False
                     if e.type == KEYUP and e.key == K_a:
                         left = False
-                    if e.type == KEYUP and e.key == 306:
-                        ctrl = False
-                    if e.type == KEYDOWN and e.key == 306:
-                        ctrl = True
 
                     if hero.weapon.ammo > 0:
                         x, y, = hero.rect.center
@@ -268,6 +278,21 @@ def main():
                         hit = Attack(x, y)
 
                 screen.blit(bg, camera.apply(bg))
+                print(bombs)
+                if hel != -1:
+                    hel.update(pos_call, bombs)
+                    screen.blit(hel.image, camera.apply(hel))
+
+                for b in bombs:
+                    b.update(pos_call[1])
+                    if b.boom_count == 0:
+                        bombs.remove(b)
+                    screen.blit(b.image, camera.apply(b))
+
+                if abs(hero.rect.x - helicopter.rect.x) in range(20, 1000):
+                    helicopter.fly_away()
+
+                screen.blit(helicopter.image, (camera.apply(helicopter)[0] - 580, camera.apply(helicopter)[1] - 280))
 
                 camera.update(hero)
                 if hero.hp >= 0:
@@ -314,8 +339,13 @@ def main():
                     if hit != '':
                         if hit.rect.colliderect(e.rect):
                             e.hp = 0
+
                     if e.dead_count == 0:
                         enemies.remove(e)
+
+                    for b in bombs:
+                        if e.rect.colliderect(b.rect) and b.boom:
+                            e.hp = 0
 
                     if e.direction:
                         screen.blit(e.weapon.image,
@@ -352,6 +382,12 @@ def main():
                     if hero.rect.colliderect(e.rect):
                         running = False
                         stage = 'menu'
+
+                for p in perks:
+                    if p.rect.colliderect(hero.rect):
+                        perks.remove(p)
+                        hero.perks += 1
+                    screen.blit(p.image, camera.apply(p))
 
                 draw_params(screen, hero, WIN_WIDTH, WIN_HEIGHT)
                 timer.tick(60)

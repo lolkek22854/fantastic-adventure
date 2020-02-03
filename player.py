@@ -41,6 +41,7 @@ class Player(sprite.Sprite):
         self.wx_r = -20
         self.wx_l = 7
         self.wy = 10
+        self.perks = 0
         self.dead_count = 10
         self.is_alive = True
         self.health = 100
@@ -48,19 +49,17 @@ class Player(sprite.Sprite):
         self.hide = False
         self.img_flag = True
         self.direction = True
-        self.yvel = 0  # скорость вертикального перемещения
-        self.onGround = False  # На земле ли я?
+        self.yvel = 0
+        self.onGround = False
         self.image = Surface((WIDTH, HEIGHT))
         self.image.fill((255, 255, 255))
-        self.rect = Rect(x, y, WIDTH, HEIGHT)  # прямоугольный объект
-        self.image.set_colorkey((255, 255, 255))  # делаем фон прозрачным
-        #        Анимация движения вправо
+        self.rect = Rect(x, y, WIDTH, HEIGHT)
+        self.image.set_colorkey((255, 255, 255))
         boltAnim = []
         for anim in ANIMATION_RIGHT:
             boltAnim.append((anim, ANIMATION_DELAY))
         self.boltAnimRight = pyganim.PygAnimation(boltAnim)
         self.boltAnimRight.play()
-        #        Анимация движения влево
         boltAnim = []
         for anim in ANIMATION_LEFT:
             boltAnim.append((anim, ANIMATION_DELAY))
@@ -69,7 +68,7 @@ class Player(sprite.Sprite):
 
         self.boltAnimStay = pyganim.PygAnimation(ANIMATION_STAY)
         self.boltAnimStay.play()
-        self.boltAnimStay.blit(self.image, (0, 0))  # По-умолчанию, стоим
+        self.boltAnimStay.blit(self.image, (0, 0))
 
         self.boltAnimJumpLeft = pyganim.PygAnimation(ANIMATION_JUMP_LEFT)
         self.boltAnimJumpLeft.play()
@@ -109,7 +108,7 @@ class Player(sprite.Sprite):
             x, y = self.rect.x, self.rect.y
             self.rect = Rect(x, y, WIDTH, HEIGHT)
             if up:
-                if self.onGround:  # прыгаем, только когда можем оттолкнуться от земли
+                if self.onGround:
                     self.yvel = -JUMP_POWER
                 self.image.fill(COLOR)
                 self.boltAnimJump.blit(self.image, (0, 0))
@@ -117,20 +116,20 @@ class Player(sprite.Sprite):
             if left:
                 self.xvel = -self.speed  # Лево = x- n
                 self.image.fill(COLOR)
-                if up:  # для прыжка влево есть отдельная анимация
+                if up:
                     self.boltAnimJumpLeft.blit(self.image, (0, 0))
                 else:
                     self.boltAnimLeft.blit(self.image, (0, 0))
 
             if right:
-                self.xvel = self.speed  # Право = x + n
+                self.xvel = self.speed
                 self.image.fill(COLOR)
                 if up:
                     self.boltAnimJumpRight.blit(self.image, (0, 0))
                 else:
                     self.boltAnimRight.blit(self.image, (0, 0))
 
-            if not (left or right):  # стоим, когда нет указаний идти
+            if not (left or right):
                 self.xvel = 0
                 # if not up:
                 #     self.image.fill(COLOR)
