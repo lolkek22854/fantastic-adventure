@@ -57,29 +57,6 @@ class Board:
             screen.blit(c.image, (c.x, c.y))
 
 
-pygame.init()
-screen = pygame.display.set_mode((500, 500))
-# board = Board(5, 7)
-# board.set_view(100, 100, 50)
-# running = True
-# while running:
-#     change_flag = False
-#     coord = -1
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             running = False
-#         if event.type == pygame.MOUSEMOTION:
-#             pos = event.pos
-#             for cell in board.board:
-#                 cell.in_cell(pos)
-#                         # print('ll')
-#                         # cell.color = (255,  255, 255)
-#
-#     screen.fill((0, 0, 0))
-#     board.render(screen)
-#
-#     pygame.display.flip()
-
 def levels(screen):
     # running = True
     board = Board(2, 6)
@@ -100,7 +77,3 @@ def levels(screen):
 
     screen.fill((0, 0, 0))
     board.render(screen)
-#
-# while True:
-#     levels(screen)
-#     pygame.display.flip()

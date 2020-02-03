@@ -83,7 +83,7 @@ def main():
             screen.blit(level_image, (140, 300))
 
             for e in pygame.event.get():
-                if e.type == QUIT or (e.type == KEYDOWN and e.key == K_q):
+                if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
                     run = False
                 if e.type == MOUSEBUTTONDOWN:
                     if not play_flag:
@@ -102,7 +102,7 @@ def main():
             board.set_view(100, 100, 70)
             while running:
                 for e in pygame.event.get():
-                    if e.type == QUIT or (e.type == KEYDOWN and e.key == K_q):
+                    if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
                         running = False
                         run = False
                     if e.type == pygame.MOUSEMOTION:
@@ -200,7 +200,7 @@ def main():
                     if not hero_alive and e.type == KEYDOWN:
                         running = False
                         stage = 'menu'
-                    if e.type == QUIT or (e.type == KEYDOWN and e.key == K_q):
+                    if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
                         running = False
                         run = False
                     if e.type == KEYDOWN and e.key == K_1:
@@ -322,7 +322,7 @@ def main():
                                     (camera.apply(e)[0] + e.wx_l, camera.apply(e)[1] + e.wy))
                     else:
                         screen.blit(e.weapon.image,
-                                    (camera.apply(e)[0] - e.wx_r, camera.apply(e)[1] + e.wy))
+                                    (camera.apply(e)[0] + e.wx_r, camera.apply(e)[1] + e.wy))
 
                 for e in entities:
                     if check_and_draw(e, hero, WIN_WIDTH, WIN_HEIGHT, total_level_width, total_level_height):
